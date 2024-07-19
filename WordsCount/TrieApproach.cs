@@ -8,14 +8,14 @@ namespace WordsCount {
     public class TrieNode {
         public static Dictionary<char, int> reserved = new Dictionary<char, int> { { '’', 0 }, { '-', 1 }, { 'ʻ', 2 } };
         public static int Offset = reserved.Count;
-        public char Val { get; private set; }
+        public readonly char? Val;
         public TrieNode[] Children = new TrieNode[Offset + 26];
         public int Count = 0;
-        public TrieNode(char c = ' ') {
+        public TrieNode(char? c = null) {
             Val = c;
         }
         public override string ToString() {
-            return Val.ToString();
+            return Val?.ToString() ?? " ";
         }
     }
 
@@ -28,8 +28,8 @@ namespace WordsCount {
                 chOut = c;
                 return true;
             } else if ('A' <= c && c <= 'Z') {
-                chOut = char.ToLower(c);
-                num = chOut - 'a' + TrieNode.Offset;
+                chOut = (char)(c - 'A' + 'a');
+                num = c - 'A' + TrieNode.Offset;
                 return true;
             } else if (TrieNode.reserved.ContainsKey(c)) {
                 num = TrieNode.reserved[c];
@@ -42,11 +42,12 @@ namespace WordsCount {
         private TrieNode ConvertFileIntoTrieNode(string text) {
             TrieNode rootNode = new TrieNode();
             int i = 0;
+            int end = text.Length;
             TrieNode curNode = rootNode;
-            while (i < text.Length) {
+            while (i < end) {
                 int num = 0;
                 char chOut = text[i];
-                if (IsLetter(text[i], ref num, ref chOut)) {
+                if (IsLetter(chOut, ref num, ref chOut)) {
                     if (curNode.Children[num] == null) {
                         curNode.Children[num] = new TrieNode(chOut);
                     }
@@ -64,7 +65,7 @@ namespace WordsCount {
 
         private void DFS(TrieNode node, StringBuilder sb, List<string>[] WordsCount) {
             if (node == null) { return; }
-            if (node.Val != ' ') { sb.Append(node.Val); }
+            if (node.Val != null) { sb.Append(node.Val); }
             if (node.Count > 0) {
                 if (WordsCount[node.Count] == null) {
                     WordsCount[node.Count] = new List<string>();
@@ -73,6 +74,7 @@ namespace WordsCount {
             }
 
             foreach (var child in node.Children) {
+                if(child == null) {  continue; }
                 DFS(child, sb, WordsCount);
             }
             if (sb.Length > 0) { sb.Length--; }

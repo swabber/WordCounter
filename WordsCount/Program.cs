@@ -7,11 +7,11 @@ namespace WordsCount {
             var setting = Output.File;
             //var file = "../../../1KB_PathToFile.txt";
             //var file = "../../../259KB_The-case-of-charles-dexter-ward.txt";
-            //var file = "../../../6MB_ManyBooks.txt";
+            var file = "../../../../WordsCount.Test/6MB_ManyBooks.txt";
             //var file = "../../../10MB_ManyBooks.txt";
-            var file = "../../../Random.txt";
+            //var file = "../../../Random.txt";
 
-            // GenerateFile(15,1000000);
+            //GenerateFile(7,100000); // 1 500 000
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
